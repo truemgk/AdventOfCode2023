@@ -28,7 +28,7 @@ namespace AdventOfCode
         {
             var lines = input.Split("\n");
             var total = 0;
-            Regex numbers = new(@"[^0-9]");
+            Regex numbers = new(@"[^1-9]");
             Regex one = new(@"one");
             Regex two = new(@"two");
             Regex three = new(@"three");
@@ -41,18 +41,38 @@ namespace AdventOfCode
 
             foreach (var line in lines)
             {
-                var mline = one.Replace(line, "1");
-                mline = two.Replace(mline, "2");
-                mline = three.Replace(mline, "3");
-                mline = four.Replace(mline, "4");
-                mline = five.Replace(mline, "5");
-                mline = six.Replace(mline, "6");
-                mline = seven.Replace(mline, "7");
-                mline = eight.Replace(mline, "8");
-                mline = nine.Replace(mline, "9");
+                var mline = one.Replace(line, "one1one");
+                Console.WriteLine(mline);
+                mline = two.Replace(mline, "two2two");
+                Console.WriteLine(mline);
+
+                mline = three.Replace(mline, "three3three");
+                Console.WriteLine(mline);
+
+                mline = four.Replace(mline, "four4four");
+                Console.WriteLine(mline);
+
+                mline = five.Replace(mline, "five5five");
+                Console.WriteLine(mline);
+
+                mline = six.Replace(mline, "six6six");
+                Console.WriteLine(mline);
+
+                mline = seven.Replace(mline, "seven7seven");
+                Console.WriteLine(mline);
+
+                mline = eight.Replace(mline, "eight8eight");
+                Console.WriteLine(mline);
+
+                mline = nine.Replace(mline, "nine9nine");
+                Console.WriteLine(mline);
+
                 mline = numbers.Replace(mline, "");
+                Console.WriteLine(mline);
+
 
                 var dub = "" + mline.First() + mline.Last();
+                Console.WriteLine(dub);
                 var num = int.Parse(dub);
                 total += num;
             }
