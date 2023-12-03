@@ -13,14 +13,14 @@ foreach (var type in types)
     var input = DayInputLoader.Load(day);
     var solutions = type.GetMethods().Where(m => m.GetCustomAttributes(typeof(SolutionAttribute), false).Length > 0);
     //write the header
-    Console.WriteLine($"Day {day} - {name}");
+    Console.WriteLine($"--- Day {day}: {name} ---");
 
     foreach (var solution in solutions)
     {
         var solutionName = solution.GetCustomAttribute<SolutionAttribute>().Name;
-        Console.WriteLine($"Solution - {solutionName}");
-        Console.WriteLine(solution.Invoke(null, new object[] { input }));
-        Console.WriteLine("===========================================");
+        Console.WriteLine($"-- Solution: {solutionName} --");
+        Console.WriteLine($"-- Result: {solution.Invoke(null, new object[] { input })} --");
+        Console.WriteLine("----------");
     }
 }
 
