@@ -1,60 +1,178 @@
-﻿using System.Text.RegularExpressions;
+﻿namespace AdventOfCode.inputs;
 
-namespace AdventOfCode
+[Day(3, "Gear Ratio")]
+public class Day3
 {
-    [Day(3, "Gear Ratios")]
-    internal class Day3
+    [Solution("A")]
+    public static string SolutionA(string input)
     {
-
-        [Solution("Part one")]
-        public static string PartOne(string input)
+        List<Number> FilterNonParts(List<Number> numberMap, string input)
         {
-            Regex numbers = new(@"[0-9]");
-            var lines = input.Split("\n");
-            var total = 0;
-            var numberBuilder = "";
-            bool isPartNumber = false;
-            for(int y = 0; y < lines.Length; y++)
+            var returnValue = new List<Number>();
+            var lines = input.Split(Environment.NewLine);
+            foreach (var numberData in numberMap)
             {
-                var line = lines[y];
-                for(int x = 0; x < line.Length; x++)
+                var x = numberData.X;
+                var y = numberData.Y;
+                var size = numberData.Size;
+                var value = numberData.Value;
+
+                var found = false;
+
+                for (var cx = x - 1; cx <= x + size; cx++)
                 {
-                    if (numbers.IsMatch(""+ line[x]))
+                    for (var cy = y - 1; cy <= y + 1; cy++)
                     {
-                        numberBuilder += line[x];
-                        //look around
-                        var up = y > 0 ? lines[y - 1][x] : '.';
-                        var down = y < lines.Length - 1 ? lines[y + 1][x] : '.';
-                        var left = x > 0 ? lines[y][x - 1] : '.';
-                        var right = x < line.Length - 1 ? lines[y][x + 1] : '.';
-                        var upLeft = y > 0 && x > 0 ? lines[y - 1][x - 1] : '.';
-                        var upRight = y > 0 && x < line.Length - 1 ? lines[y - 1][x + 1] : '.';
-                        var downLeft = y < lines.Length - 1 && x > 0 ? lines[y + 1][x - 1] : '.';
-                        var downRight = y < lines.Length - 1 && x < line.Length - 1 ? lines[y + 1][x + 1] : '.';
-
-                        var idea = up + "" + down + "" + left + "" + right + "" + upLeft + "" + upRight + "" + downLeft + "" + downRight;
-
-                        idea = numbers.Replace(idea, ".");
-                        idea = idea.Replace(".", "");
-                        //Console.WriteLine(idea + "   -   " + idea.Length + "  - -- --   " + numberBuilder);
-                        if (idea.Length > 0)
+                        if (cy < 0 || cy >= lines.Length || cx < 0 || cx >= lines[cy].Length)
                         {
-                            isPartNumber = true;
+                            continue;
+                        }
+
+                        var character = lines[cy][cx];
+                        if (character != '.' && !IsANumber(character))
+                        {
+                            found = true;
+                            break;
                         }
                     }
-                    else
+                }
+
+                if (found)
+                {
+                    returnValue.Add(new Number(x, y, size, value));
+                }
+            }
+
+            return returnValue;
+        }
+
+        var numberMap = FindAllNumbers(input);
+        var filtered = FilterNonParts(numberMap, input);
+
+        var total = 0;
+        foreach (var number in filtered)
+        {
+            total += number.Value;
+        }
+
+        return "" + total;
+    }
+
+    [Solution("B")]
+    public static string SolutionB(string input)
+    {
+        List<Gear> GetAllGears(string input)
+        {
+            var lines = input.Split(Environment.NewLine);
+            var returnValue = new List<Gear>();
+            for (int y = 0; y < lines.Length; y++)
+            {
+                for (int x = 0; x < lines[y].Length; x++)
+                {
+                    if (lines[y][x] == '*')
                     {
-                        if(isPartNumber)
-                        {
-                            total += int.Parse(numberBuilder);
-                            Console.WriteLine("adding " + numberBuilder);
-                            isPartNumber = false;
-                        }
-                        numberBuilder = "";
+                        returnValue.Add(new Gear(x, y, 1, 0));
                     }
                 }
             }
-            return "" + total;
+            return returnValue;
         }
+
+        List<Gear> FindAllAdjacentNumbers(List<Gear> gears, List<Number> numbers)
+        {
+            var returnValue = new List<Gear>();
+            foreach (var gear in gears)
+            {
+                var x = gear.X;
+                var y = gear.Y;
+                var value = 1;
+                var count = 0;
+
+                var found = false;
+
+                foreach (var number in numbers)
+                {
+                    var nx = number.X;
+                    var ny = number.Y;
+                    var size = number.Size;
+                    var nvalue = number.Value;
+
+                    if (nx - 1<= x && x <= nx + size && ny - 1 <= y && y <= ny + 1)
+                    {
+                        value *= nvalue;
+                        count += 1;
+                    }
+                }
+
+                if (count == 2)
+                {
+                    returnValue.Add(new Gear(x, y, value, count));
+                }
+            }
+
+            return returnValue;
+        }
+
+
+        var numberMap = FindAllNumbers(input);
+        var gearMap = GetAllGears(input);
+        var filtered = FindAllAdjacentNumbers(gearMap, numberMap);
+
+        var total = 0;
+        foreach (var gear in filtered)
+        {
+            total += gear.Value;
+        }
+
+        return "" + total;
     }
+
+    static List<Number> FindAllNumbers(string input)
+    {
+        var returnValue = new List<Number>();
+        var lines = input.Split(Environment.NewLine);
+        var foundNumber = false;
+        var fx = 0;
+        var fy = 0;
+        var fs = 0;
+        var value = 0;
+        for (int y = 0; y < lines.Length; y++)
+        {
+            for (int x = 0; x < lines[y].Length; x++)
+            {
+                if (foundNumber && IsANumber(lines[y][x]))
+                {
+                    fs += 1;
+                    value = value * 10 + lines[y][x] - '0';
+                }
+                else if (IsANumber(lines[y][x]))
+                {
+                    fx = x;
+                    fy = y;
+                    fs = 1;
+                    value = lines[y][x] - '0';
+                    foundNumber = true;
+                }
+                else if (foundNumber)
+                {
+                    returnValue.Add(new Number(fx, fy, fs, value));
+                    fx = 0;
+                    fy = 0;
+                    fs = 0;
+                    value = 0;
+                    foundNumber = false;
+                }
+            }
+        }
+
+        return returnValue;
+    }
+
+    static bool IsANumber(char test)
+    {
+        return test is >= '0' and <= '9';
+    }
+
+    record Number(int X, int Y, int Size, int Value);
+    record Gear(int X, int Y, int Value, int Count);
 }
