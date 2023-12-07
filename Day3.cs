@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.inputs;
+﻿namespace AdventOfCode;
 
 [Day(3, "Gear Ratio")]
 public class Day3

@@ -3,8 +3,8 @@
     [Day(2, "Cube Conundrum")]
     internal class Day2
     {
-        [Solution("Part one")]
-        public static string PartOne(string input)
+        [Solution("A")]
+        public static string SolutionA(string input)
         {
             // "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"
             var lines = input.Split("\n");
@@ -42,8 +42,8 @@
             return ""  + total;
         }
 
-        [Solution("Part two")]
-        public static string PartTwo(string input)
+        [Solution("B")]
+        public static string SolutionB(string input)
         {
             // "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"
             var lines = input.Split("\n");

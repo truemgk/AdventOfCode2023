@@ -5,8 +5,8 @@ namespace AdventOfCode
     [Day(1, "Trebuchet")]
     internal class Day1
     {
-        [Solution("Regex - Part one")]
-        public static string Regx(string input)
+        [Solution("A")]
+        public static string SolutionA(string input)
         {
             Regex regex = new(@"[^0-9]");
 
@@ -23,35 +23,20 @@ namespace AdventOfCode
             return "" + total;
         }
 
-        [Solution("Trebuchet - Regex - now with words")]
-        public static string SolutionPart2(string input)
+        [Solution("B")]
+        public static string SolutionB(string input)
         {
             var lines = input.Split("\n");
             var total = 0;
-            Regex numbers = new(@"[^1-9]");
-            Regex one = new(@"one");
-            Regex two = new(@"two");
-            Regex three = new(@"three");
-            Regex four = new(@"four");
-            Regex five = new(@"five");
-            Regex six = new(@"six");
-            Regex seven = new(@"seven");
-            Regex eight = new(@"eight");
-            Regex nine = new(@"nine");
+            var regreplace = new Dictionary<Regex, string> { { new(@"one"), "one1one" }, { new(@"two"), "two2two" }, { new(@"three"), "three3three" }, { new(@"four"), "four4four" }, { new(@"five"), "five5five" }, { new(@"six"), "six6six" }, { new(@"seven"), "seven7seven" }, { new(@"eight"), "eight8eight" }, { new(@"nine"), "nine9nine" }, { new(@"[^1-9]"), ""} };
 
             foreach (var line in lines)
             {
-                var mline = one.Replace(line, "one1one");
-                mline = two.Replace(mline, "two2two");
-                mline = three.Replace(mline, "three3three");
-                mline = four.Replace(mline, "four4four");
-                mline = five.Replace(mline, "five5five");
-                mline = six.Replace(mline, "six6six");
-                mline = seven.Replace(mline, "seven7seven");
-                mline = eight.Replace(mline, "eight8eight");
-                mline = nine.Replace(mline, "nine9nine");
-                mline = numbers.Replace(mline, "");
-
+                var mline = line;
+                foreach (var item in regreplace)
+                {
+                    mline = item.Key.Replace(mline, item.Value);
+                }
                 var dub = "" + mline.First() + mline.Last();
                 var num = int.Parse(dub);
                 total += num;
